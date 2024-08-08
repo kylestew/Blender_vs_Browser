@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blender HTTP Client</title>
+    </head>
+    <body>
+        <h1>Send Code to Blender</h1>
+        <button onclick="sendCodeToBlender()">Send Code</button>
+
+        <script>
+            function sendCodeToBlender() {
+                const codeString = `
+import bpy
+bpy.ops.mesh.primitive_cube_add()
+bpy.context.object.name = "RemoteCube"
+            `
+
+                fetch('http://localhost:8080', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                    },
+                    body: codeString,
+                })
+                    .then((response) => response.text())
+                    .then((data) => {
+                        console.log('Response from Blender:', data)
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error)
+                    })
+            }
+        </script>
+    </body>
+</html>
