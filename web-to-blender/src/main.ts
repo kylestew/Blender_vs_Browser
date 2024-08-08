@@ -1,46 +1,55 @@
 import './style.css'
 
-import { cleanScene, sendCodeToBlender, sendObjectToBlender } from './blender_remote'
-import { Cube, Curve } from './lib'
+// import { cleanScene, sendCodeToBlender, sendObjectToBlender } from './blender_remote'
+import { toBlenderCode } from './lib'
+// import { Cube, Curve } from './lib'
+import { CubeGrid, Cube } from 'root/geo'
 
-let cube = new Cube(2.0, [1, 2, 3], [1, 2, 3], [1, 2, 3], 'hello world')
+let cube = new Cube([0, 1, 2], [3, 4, 5])
+cube.attribs = { name: 'hello cube', rotation: [1, 2, 3] }
 
-const numPoints = 36
-const radius = 1
+console.log(cube)
 
-const points: [number, number, number][] = []
+console.log(toBlenderCode(cube))
 
-for (let i = 0; i < numPoints; i++) {
-    const angle = (2 * Math.PI * i) / numPoints
-    const x = radius * Math.cos(angle)
-    const y = radius * Math.sin(angle)
-    const z = 0 // Assuming the circle lies in the XY plane
-    points.push([x, y, z])
-}
+// cleanScene()
+// sendObjectToBlender(curve)
 
-const curve = new Curve(points)
+// let cube = new Cube(2.0, [1, 2, 3], [1, 2, 3], [1, 2, 3], 'hello world')
 
-cleanScene()
-sendObjectToBlender(curve)
+// const numPoints = 36
+// const radius = 1
 
-/*
-def gen_perlin_curve():
+// const points: [number, number, number][] = []
 
-    bpy.ops.mesh.primitive_circle_add(vertices=512, radius=1)
-    circle = active_object()
+// for (let i = 0; i < numPoints; i++) {
+//     const angle = (2 * Math.PI * i) / numPoints
+//     const x = radius * Math.cos(angle)
+//     const y = radius * Math.sin(angle)
+//     const z = 0 // Assuming the circle lies in the XY plane
+//     points.push([x, y, z])
+// }
 
-    deform_coords = []
+// const curve = new Curve(points)
 
-    for vert in circle.data.vertices:
-        new_location = vert.co
-        noise_value = mathutils.noise.noise(new_location)
-        noise_value = noise_value / 2
+// # Add a sun lamp above the grid.
+// bpy.ops.object.light_add(
+//     type='SUN',
+//     radius=1.0,
+//     location=(0.0, 0.0, extents * 1.5))
 
-        deform_vector = vert.co * noise_value
+// # Add an orthographic camera above the grid.
+// # Rotate 45 degrees on the x-axis, 45 degrees on the z-axis; uses XYZ order.
+// bpy.ops.object.camera_add(
+//     location=(extents * 1.414, -extents * 1.414, extents * 2.121),
+//     rotation=(0.785398, 0.0, 0.785398))
+// bpy.context.object.data.type = 'ORTHO'
+// bpy.context.object.data.ortho_scale = extents * 7.0
 
-        deform_coord = vert.co + deform_vector
-        deform_coords.append(deform_coord)
-
-    bpy.ops.object.convert(target="CURVE")
-    curve_obj = active_object()
-   */
+// # Create a ground.
+// bpy.ops.mesh.primitive_plane_add(
+//     size=extents * 15.0, location=(0.0, 0.0, -extents * 1.5))
+// bpy.context.object.name = "Ground"
+// mat = bpy.data.materials.new(name="Ground")
+// mat.diffuse_color = (0.015, 0.015, 0.015, 1.0)
+// bpy.context.object.data.materials.append(mat)

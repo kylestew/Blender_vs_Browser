@@ -1,3 +1,7 @@
+export interface BlenderPythonDescribable {
+    toBlenderCode(): string
+}
+
 export function sendCodeToBlender(codeString: string) {
     fetch('http://localhost:8080', {
         method: 'POST',
@@ -13,10 +17,6 @@ export function sendCodeToBlender(codeString: string) {
         .catch((error) => {
             console.error('Error:', error)
         })
-}
-
-export interface BlenderPythonDescribable {
-    toBlenderCode(): string
 }
 
 export function cleanScene() {

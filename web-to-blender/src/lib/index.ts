@@ -1,2 +1,1 @@
-export { Cube } from './cube'
-export { Curve } from './curve'
+export { toBlenderCode } from './toBlenderCode'
