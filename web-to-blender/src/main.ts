@@ -1,19 +1,19 @@
 import './style.css'
 
-// import { cleanScene, sendCodeToBlender, sendObjectToBlender } from './blender_remote'
-import { toBlenderCode } from './lib'
-// import { Cube, Curve } from './lib'
+import { cleanScene, sendCodeToBlender, sendObjectToBlender } from './blender_remote'
+import { Light } from './lib'
 import { CubeGrid, Cube } from 'root/geo'
 
 let cube = new Cube([0, 1, 2], [3, 4, 5])
 cube.attribs = { name: 'hello cube', rotation: [1, 2, 3] }
 
+let light = new Light('SUN', 1.0, [0, 0, 8])
+
 console.log(cube)
 
-console.log(toBlenderCode(cube))
-
-// cleanScene()
-// sendObjectToBlender(curve)
+cleanScene()
+sendObjectToBlender(cube)
+sendObjectToBlender(light)
 
 // let cube = new Cube(2.0, [1, 2, 3], [1, 2, 3], [1, 2, 3], 'hello world')
 

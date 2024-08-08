@@ -2,13 +2,15 @@ export interface BlenderPythonDescribable {
     toBlenderCode(): string
 }
 
+import { toBlenderCode } from '../lib'
+
 export function sendCodeToBlender(codeString: string) {
     fetch('http://localhost:8080', {
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain',
         },
-        body: codeString,
+        body: codeString + '\nbpy.context.view_layer.update()',
     })
         .then((response) => response.text())
         .then((data) => {
@@ -57,6 +59,12 @@ bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursi
     sendCodeToBlender(codeString)
 }
 
-export function sendObjectToBlender(object: BlenderPythonDescribable) {
-    sendCodeToBlender(object.toBlenderCode())
+export function sendObjectToBlender(object: any) {
+    let code = toBlenderCode(object)
+    if (code) {
+        console.log(code)
+        sendCodeToBlender(code)
+    } else {
+        console.error('Could not convert object to Blender code:', object)
+    }
 }
