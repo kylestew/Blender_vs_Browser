@@ -1,11 +1,18 @@
-import { Attribs, Cube } from 'root/geo'
+import { Attribs, Cube, Plane } from 'root/geo'
 import { Light } from './light'
+import { Camera } from './camera'
 
 export function toBlenderCode(obj: any): string | undefined {
     if (obj instanceof Cube) {
         return cubeToCode(obj as Cube)
+    } else if (obj instanceof Plane) {
+        return planeToCode(obj as Plane)
     } else if (obj instanceof Light) {
-        return (obj as Light).toBlenderCode()
+        const light = obj as Light
+        return applyAttribs(light.attribs, light.toBlenderCode())
+    } else if (obj instanceof Camera) {
+        const camera = obj as Camera
+        return applyAttribs(camera.attribs, camera.toBlenderCode())
     }
     return undefined
 }
@@ -36,6 +43,16 @@ function cubeToCode(cube: Cube): string {
 bpy.ops.mesh.primitive_cube_add(location=(${pos[0]}, ${pos[1]}, ${pos[2]}), size=1)
 cube = bpy.context.active_object
 cube.scale = (${size[0]}, ${size[1]}, ${size[2]}) # apply cube size
+`
+    return applyAttribs(attribs, code)
+}
+
+function planeToCode(plane: Plane): string {
+    // https://docs.blender.org/api/current/bpy.ops.mesh.html#bpy.ops.mesh.primitive_plane_add
+    const { pos, size, attribs } = plane
+
+    const code = `
+bpy.ops.mesh.primitive_plane_add(size=${size}, location=(${pos[0]}, ${pos[1]}, ${pos[2]}))
 `
     return applyAttribs(attribs, code)
 }
