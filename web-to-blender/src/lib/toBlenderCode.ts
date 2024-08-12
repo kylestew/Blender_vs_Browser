@@ -29,6 +29,9 @@ function applyAttribs(attribs: Attribs, code: string): string {
     if (attribs.name) {
         attribsCode += `obj.name = "${attribs.name}"\n`
     }
+    // if (attribs.translation) {
+    //     attribsCode += `obj.translate = (${attribs.rotation[0]}, ${attribs.rotation[1]}, ${attribs.rotation[2]})\n`
+    // }
     if (attribs.rotation) {
         attribsCode += `obj.rotation_euler = (${attribs.rotation[0]}, ${attribs.rotation[1]}, ${attribs.rotation[2]})\n`
     }

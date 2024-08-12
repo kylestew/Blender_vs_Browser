@@ -2,30 +2,26 @@ export interface BlenderPythonDescribable {
     toBlenderCode(): string
 }
 
-import { toBlenderCode } from '../lib'
-
-export function sendCodeToBlender(codeString: string) {
-    fetch('http://localhost:8080', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain',
-        },
-        body: codeString,
-        // + '\nbpy.context.view_layer.update()',
-    })
-        .then((response) => response.text())
-        .then((data) => {
-            console.log('Response from Blender:', data)
-        })
-        .catch((error) => {
-            console.error('Error:', error)
-        })
+export interface Extras {
+    name?: string
+    material?: string
 }
 
-export function cleanScene() {
-    // Removing all of the objects, collection, materials, particles,
-    // textures, images, curves, meshes, actions, nodes, and worlds from the scene
-    const codeString = `
+import { toBlenderCode } from '../lib'
+
+export class BlenderRemote {
+    queuedCode: string = ''
+
+    constructor(cleanOnStart = true) {
+        if (cleanOnStart) {
+            this.cleanScene()
+        }
+    }
+
+    cleanScene() {
+        // Removing all of the objects, collection, materials, particles,
+        // textures, images, curves, meshes, actions, nodes, and worlds from the scene
+        const codeString = `
 # make sure the active object is not in Edit Mode
 if bpy.context.active_object and bpy.context.active_object.mode == "EDIT":
     bpy.ops.object.editmode_toggle()
@@ -53,19 +49,51 @@ for name in world_names:
 # create a new world data block
 bpy.ops.world.new()
 bpy.context.scene.world = bpy.data.worlds["World"]
-
-# run this only for Blender versions 3.0 and higher
-bpy.ops.outliner.orphans_purge(do_local_ids=True, do_linked_ids=True, do_recursive=True)
 `
-    sendCodeToBlender(codeString)
-}
+        this.sendCodeToBlender(codeString)
+    }
 
-export function sendObjectToBlender(object: any) {
-    let code = toBlenderCode(object)
-    if (code) {
-        console.log(code)
-        sendCodeToBlender(code)
-    } else {
-        console.error('Could not convert object to Blender code:', object)
+    addObject(object: any, extras: Extras = {}) {
+        let code = toBlenderCode(object)
+        if (code) {
+            this.queuedCode += code + '\n'
+
+            if (extras.material) {
+                this.queuedCode +=
+                    `bpy.context.object.data.materials.append(bpy.data.materials["${extras.material}"])` + '\n'
+            }
+            if (extras.name) {
+                this.queuedCode += `bpy.context.active_object.name = "${extras.name}"` + '\n'
+            }
+        } else {
+            console.error('Could not convert object to Blender code:', object)
+        }
+    }
+
+    addCode(code: string) {
+        this.queuedCode += code + '\n'
+    }
+
+    flush() {
+        console.log(this.queuedCode)
+        this.sendCodeToBlender(this.queuedCode)
+        this.queuedCode = ''
+    }
+
+    private sendCodeToBlender(codeString: string) {
+        fetch('http://localhost:8080', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: codeString + '\nbpy.context.view_layer.update()',
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                console.log('Response from Blender:', data)
+            })
+            .catch((error) => {
+                console.error('Error:', error)
+            })
     }
 }

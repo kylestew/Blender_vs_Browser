@@ -14,7 +14,7 @@ export class Material implements BlenderPythonDescribable {
         const diffColor = `(${this.diffuseColor[0]}, ${this.diffuseColor[1]}, ${this.diffuseColor[2]}, ${this.diffuseColor[3]})`
         return `
 ${this.name} = bpy.data.materials.new(name="${this.name}")
-mat.diffuse_color = ${diffColor}
+${this.name}.diffuse_color = ${diffColor}
         `
     }
 }
