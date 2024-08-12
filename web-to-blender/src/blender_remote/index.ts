@@ -10,7 +10,8 @@ export function sendCodeToBlender(codeString: string) {
         headers: {
             'Content-Type': 'text/plain',
         },
-        body: codeString + '\nbpy.context.view_layer.update()',
+        body: codeString,
+        // + '\nbpy.context.view_layer.update()',
     })
         .then((response) => response.text())
         .then((data) => {

@@ -1,6 +1,7 @@
 import { Attribs, Cube, Plane } from 'root/geo'
 import { Light } from './light'
 import { Camera } from './camera'
+import { Material } from './material'
 
 export function toBlenderCode(obj: any): string | undefined {
     if (obj instanceof Cube) {
@@ -13,6 +14,9 @@ export function toBlenderCode(obj: any): string | undefined {
     } else if (obj instanceof Camera) {
         const camera = obj as Camera
         return applyAttribs(camera.attribs, camera.toBlenderCode())
+    } else if (obj instanceof Material) {
+        const mat = obj as Material
+        return mat.toBlenderCode()
     }
     return undefined
 }
