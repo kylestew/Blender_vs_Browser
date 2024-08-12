@@ -21,27 +21,35 @@ cleanScene()
 const mat = new Material('mat', [1.0, 0.0, 0.0, 1.0])
 sendObjectToBlender(mat)
 
-const grid = new CubeGrid([0, 0, 0], [extents, extents, extents], count, count, count)
-grid.cubes().forEach((cube) => {
-    console.log(cube, centroid(cube))
+// const grid = new CubeGrid([0, 0, 0], [extents, extents, extents], count, count, count)
+const grid = new Grid([0, 0], [extents, extents], count, count)
+grid.rects().forEach((rect) => {
+    const cube = Cube.withRect(rect)
 
     const insetCube = offset(cube, [-padding, -padding, -padding])
-
-    console.log(insetCube, centroid(cube))
-
-    // let cube = new Cube([0, 1, 2], [3, 4, 5])
-    // cube.attribs = { name: 'a cube', material: mat}
-
     sendObjectToBlender(insetCube)
-
     sendCodeToBlender('bpy.context.object.data.materials.append(bpy.data.materials["mat"])')
 
-    // TODO: name the cube specifically and apply a material individually to each cube
-    // let cube = new Cube([0, 1, 2], [3, 4, 5])
-    // cube.attribs = { name: 'hello cube', rotation: [1, 2, 3] }
-    // sendObjectToBlender(cube)
-    // sendCodeToBlender()
+    console.log(cube)
 })
+// grid.cubes().forEach((cube) => {
+//     console.log(cube, centroid(cube))
+
+//     const insetCube = offset(cube, [-padding, -padding, -padding])
+
+//     console.log(insetCube, centroid(cube))
+
+//     // let cube = new Cube([0, 1, 2], [3, 4, 5])
+//     // cube.attribs = { name: 'a cube', material: mat}
+
+//     sendObjectToBlender(insetCube)
+
+//     // TODO: name the cube specifically and apply a material individually to each cube
+//     // let cube = new Cube([0, 1, 2], [3, 4, 5])
+//     // cube.attribs = { name: 'hello cube', rotation: [1, 2, 3] }
+//     // sendObjectToBlender(cube)
+//     // sendCodeToBlender()
+// })
 
 // add a sun lamp abote the grid
 let light = new Light('SUN', 1.0, [0, 0, extents * 1.5])
