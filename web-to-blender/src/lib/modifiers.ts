@@ -1,19 +1,15 @@
-import { BlenderPythonDescribable } from '../blender_remote'
+import { toBlenderPython } from './toBlenderPython'
 
-class Modifier implements BlenderPythonDescribable {
-    obj: any
-
-    constructor(obj: any) {
-        this.obj = obj
-    }
-
-    static wireframe(obj: any): Modifier {
-        return new Modifier(obj)
-    }
-
-    toBlenderCode(): string {
-        return `bpy.context.object.modifiers.new(name="Wireframe", type='WIREFRAME')`
-    }
+export function wireframe(object: any): string {
+    return toBlenderPython(object) + `bpy.context.object.modifiers.new(name="Wireframe", type='WIREFRAME')\n`
 }
 
-export { Modifier }
+export function material(object: any, matName: string): string {
+    return toBlenderPython(object) + `bpy.context.object.data.materials.append(bpy.data.materials["${matName}"])\n`
+}
+
+// class Name implements Modifier {
+//     // if (extras.name) {
+//     //     this.queuedCode += `bpy.context.active_object.name = "${extras.name}"` + '\n'
+//     // }
+// }

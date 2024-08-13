@@ -1,11 +1,15 @@
-import { Cube, CubeGrid } from 'root/geo'
+import { CubeGrid, Cube } from 'root/geo'
 import { offset } from 'root/geo'
+
 import { random, pickRandom } from 'root/random'
-import { Modifier } from '../lib/modifiers'
+
+import { wireframe, material } from '../lib/modifiers'
 import { BlenderRemote } from '../blender_remote'
 
 const remote = new BlenderRemote()
 let outputCount = 0
+
+const mats = ['random', 'metal']
 
 // spacing between cubes
 const padding = 0.025
@@ -33,6 +37,14 @@ function randomRemoveDecision(generation: number): boolean {
     return random() < 0.3333
 }
 
+function addRandomModifier(cube: Cube): Cube | string {
+    if (Math.random() < 0.2) {
+        return wireframe(cube)
+    } else {
+        return cube
+    }
+}
+
 function subdivideCube(cube: Cube, generation: number = 0) {
     const divisions = divisionCount(generation)
     const grid = CubeGrid.withCube(cube, divisions, divisions, divisions)
@@ -42,22 +54,16 @@ function subdivideCube(cube: Cube, generation: number = 0) {
             subdivideCube(cube, generation + 1)
         } else {
             if (!randomRemoveDecision(generation)) {
-                const insetCube = offset(cube, [-padding / 2.0, -padding / 2.0, -padding / 2.0])
-                remote.addObject(insetCube)
+                const insetCube = offset(cube, [-padding / 2.0, -padding / 2.0, -padding / 2.0]) as Cube
+                remote.add(material(addRandomModifier(insetCube), 'random'))
                 outputCount++
             }
         }
     })
-    remote.flush()
 }
 
 const baseCube = new Cube([0, 0, 0], [2, 2, 2])
-// subdivideCube(baseCube)
-
-const modifiedCube = Modifier.wireframe(baseCube)
-remote.addObject(modifiedCube)
+subdivideCube(baseCube)
 
 remote.flush()
-// console.log('Final count:', outputCount)
-
-// TODO: how to add modifiers to the cubes?
+console.log('Final count:', outputCount)

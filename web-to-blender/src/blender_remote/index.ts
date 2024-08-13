@@ -1,13 +1,4 @@
-export interface BlenderPythonDescribable {
-    toBlenderCode(): string
-}
-
-export interface Extras {
-    name?: string
-    material?: string
-}
-
-import { toBlenderCode } from '../lib'
+import { toBlenderPython } from '../lib/toBlenderPython'
 
 export class BlenderRemote {
     queuedCode: string = ''
@@ -49,34 +40,28 @@ for name in world_names:
 # create a new world data block
 bpy.ops.world.new()
 bpy.context.scene.world = bpy.data.worlds["World"]
+
+bpy.context.view_layer.update()
 `
         this.sendCodeToBlender(codeString)
     }
 
-    addObject(object: any, extras: Extras = {}) {
-        let code = toBlenderCode(object)
-        if (code) {
-            this.queuedCode += code
-
-            if (extras.material) {
-                this.queuedCode +=
-                    `bpy.context.object.data.materials.append(bpy.data.materials["${extras.material}"])` + '\n'
-            }
-            if (extras.name) {
-                this.queuedCode += `bpy.context.active_object.name = "${extras.name}"` + '\n'
-            }
+    add(object: string | any) {
+        if (typeof object === 'string') {
+            this.queuedCode += object + '\n'
         } else {
-            console.error('Could not convert object to Blender code:', object)
+            const code = toBlenderPython(object)
+            if (code) {
+                this.queuedCode += code + '\n'
+            } else {
+                console.error('Could not convert object to Blender code:', object)
+            }
         }
-    }
-
-    addCode(code: string) {
-        this.queuedCode += code + '\n'
     }
 
     flush() {
         console.log(this.queuedCode)
-        this.sendCodeToBlender(this.queuedCode)
+        this.sendCodeToBlender(this.queuedCode + '\nbpy.context.view_layer.update()')
         this.queuedCode = ''
     }
 
@@ -86,7 +71,7 @@ bpy.context.scene.world = bpy.data.worlds["World"]
             headers: {
                 'Content-Type': 'text/plain',
             },
-            body: codeString + '\nbpy.context.view_layer.update()',
+            body: codeString,
         })
             .then((response) => response.text())
             .then((data) => {

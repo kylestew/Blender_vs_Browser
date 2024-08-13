@@ -1,26 +1,32 @@
 import { Attribs, Cube, Plane } from 'root/geo'
-import { Light } from './light'
-import { Camera } from './camera'
-import { Material } from './material'
-import { Modifier } from './modifiers'
+import { Light } from './Light'
+import { Camera } from './Camera'
+import { Material } from './Material'
 
-export function toBlenderCode(obj: any): string | undefined {
+export interface BlenderPythonDescribable {
+    toBlenderPython(): string
+}
+
+export function toBlenderPython(obj: any): string | undefined {
+    if (typeof obj === 'string') return obj
+
+    if ('toBlenderPython' in obj) {
+        return obj.toBlenderPython()
+    }
+
     if (obj instanceof Cube) {
         return cubeToCode(obj as Cube)
     } else if (obj instanceof Plane) {
         return planeToCode(obj as Plane)
     } else if (obj instanceof Light) {
         const light = obj as Light
-        return applyAttribs(light.attribs, light.toBlenderCode())
+        return applyAttribs(light.attribs, light.toBlenderPython())
     } else if (obj instanceof Camera) {
         const camera = obj as Camera
-        return applyAttribs(camera.attribs, camera.toBlenderCode())
+        return applyAttribs(camera.attribs, camera.toBlenderPython())
     } else if (obj instanceof Material) {
         const mat = obj as Material
-        return mat.toBlenderCode()
-    } else if (obj instanceof Modifier) {
-        const mod = obj as Modifier
-        return toBlenderCode(mod.obj) + '\n' + mod.toBlenderCode()
+        return mat.toBlenderPython()
     }
     return undefined
 }

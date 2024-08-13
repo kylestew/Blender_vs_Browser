@@ -1,4 +1,4 @@
-import { BlenderPythonDescribable } from '../blender_remote'
+import { BlenderPythonDescribable } from './toBlenderPython'
 import { Color } from './types'
 
 export class Material implements BlenderPythonDescribable {
@@ -10,7 +10,7 @@ export class Material implements BlenderPythonDescribable {
         this.diffuseColor = diffuseColor
     }
 
-    toBlenderCode(): string {
+    toBlenderPython(): string {
         const diffColor = `(${this.diffuseColor[0]}, ${this.diffuseColor[1]}, ${this.diffuseColor[2]}, ${this.diffuseColor[3]})`
         return `
 ${this.name} = bpy.data.materials.new(name="${this.name}")
