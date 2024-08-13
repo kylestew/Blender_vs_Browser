@@ -1,4 +1,6 @@
 import bpy
+import bmesh
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
 
@@ -9,7 +11,7 @@ PORT_NUMBER = 8080
 # Function to execute code on the main thread
 def execute_on_main_thread(code):
     try:
-        exec(code, {"bpy": bpy})
+        exec(code, {"bpy": bpy, "bmesh": bmesh})
         response = "Code executed successfully"
     except Exception as e:
         response = str(e)

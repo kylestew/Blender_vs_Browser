@@ -16,8 +16,7 @@ const padding = 0.025
 
 function divisionCount(generation: number) {
     if (generation === 0) {
-        // return 6
-        return 3
+        return 6
     } else if (generation === 1) {
         return pickRandom([2, 3])
     }

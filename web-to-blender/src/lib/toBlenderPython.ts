@@ -3,6 +3,8 @@ import { Light } from './Light'
 import { Camera } from './Camera'
 import { Material } from './Material'
 
+import { randomInt } from 'root/random'
+
 export interface BlenderPythonDescribable {
     toBlenderPython(): string
 }
@@ -53,13 +55,21 @@ function applyAttribs(attribs: Attribs, code: string): string {
 }
 
 function cubeToCode(cube: Cube): string {
-    // https://docs.blender.org/api/current/bpy.ops.mesh.html#bpy.ops.mesh.primitive_cube_add
+    // https://docs.blender.org/api/current/bmesh.ops.html#bmesh.ops.create_cube
     const { size, attribs } = cube
     const center = cube.center
 
     const code = `
-bpy.ops.mesh.primitive_cube_add(location=(${center[0]}, ${center[1]}, ${center[2]}), size=1)
-bpy.context.active_object.scale = (${size[0]}, ${size[1]}, ${size[2]}) 
+bm = bmesh.new()
+bmesh.ops.create_cube(bm, size=1)
+mesh_data = bpy.data.meshes.new("Cube")
+bm.to_mesh(mesh_data)
+bm.free()
+mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
+mesh_obj.location = (${center[0]}, ${center[1]}, ${center[2]})
+bpy.context.collection.objects.link(mesh_obj)
+mesh_obj.scale = (${size[0]}, ${size[1]}, ${size[2]})
+bpy.context.view_layer.objects.active = mesh_obj
 `
     return applyAttribs(attribs, code)
 }
