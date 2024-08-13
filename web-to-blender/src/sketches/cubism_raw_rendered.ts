@@ -1,6 +1,7 @@
 import { Cube, CubeGrid } from 'root/geo'
 import { offset } from 'root/geo'
 import { random, pickRandom } from 'root/random'
+import { Modifier } from '../lib/modifiers'
 import { BlenderRemote } from '../blender_remote'
 
 const remote = new BlenderRemote()
@@ -51,7 +52,12 @@ function subdivideCube(cube: Cube, generation: number = 0) {
 }
 
 const baseCube = new Cube([0, 0, 0], [2, 2, 2])
-subdivideCube(baseCube)
+// subdivideCube(baseCube)
+
+const modifiedCube = Modifier.wireframe(baseCube)
+remote.addObject(modifiedCube)
 
 remote.flush()
-console.log('Final count:', outputCount)
+// console.log('Final count:', outputCount)
+
+// TODO: how to add modifiers to the cubes?

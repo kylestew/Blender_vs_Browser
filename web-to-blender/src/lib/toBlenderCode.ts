@@ -2,6 +2,7 @@ import { Attribs, Cube, Plane } from 'root/geo'
 import { Light } from './light'
 import { Camera } from './camera'
 import { Material } from './material'
+import { Modifier } from './modifiers'
 
 export function toBlenderCode(obj: any): string | undefined {
     if (obj instanceof Cube) {
@@ -17,6 +18,9 @@ export function toBlenderCode(obj: any): string | undefined {
     } else if (obj instanceof Material) {
         const mat = obj as Material
         return mat.toBlenderCode()
+    } else if (obj instanceof Modifier) {
+        const mod = obj as Modifier
+        return toBlenderCode(mod.obj) + '\n' + mod.toBlenderCode()
     }
     return undefined
 }
