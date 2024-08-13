@@ -44,12 +44,12 @@ function applyAttribs(attribs: Attribs, code: string): string {
 
 function cubeToCode(cube: Cube): string {
     // https://docs.blender.org/api/current/bpy.ops.mesh.html#bpy.ops.mesh.primitive_cube_add
-    const { pos, size, attribs } = cube
+    const { size, attribs } = cube
+    const center = cube.center
 
     const code = `
-bpy.ops.mesh.primitive_cube_add(location=(${pos[0]}, ${pos[1]}, ${pos[2]}), size=1)
-cube = bpy.context.active_object
-cube.scale = (${size[0]}, ${size[1]}, ${size[2]}) # apply cube size
+bpy.ops.mesh.primitive_cube_add(location=(${center[0]}, ${center[1]}, ${center[2]}), size=1)
+bpy.context.active_object.scale = (${size[0]}, ${size[1]}, ${size[2]}) 
 `
     return applyAttribs(attribs, code)
 }

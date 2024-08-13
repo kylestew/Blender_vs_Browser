@@ -56,7 +56,7 @@ bpy.context.scene.world = bpy.data.worlds["World"]
     addObject(object: any, extras: Extras = {}) {
         let code = toBlenderCode(object)
         if (code) {
-            this.queuedCode += code + '\n'
+            this.queuedCode += code
 
             if (extras.material) {
                 this.queuedCode +=
