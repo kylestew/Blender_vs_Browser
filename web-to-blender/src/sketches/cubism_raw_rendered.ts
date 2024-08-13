@@ -38,9 +38,9 @@ function randomRemoveDecision(generation: number): boolean {
 
 function addRandomModifier(cube: Cube): Cube | string {
     if (Math.random() < 0.2) {
-        return wireframe(cube)
+        return material(wireframe(cube), 'metal')
     } else {
-        return cube
+        return material(cube, 'random')
     }
 }
 
@@ -54,7 +54,7 @@ function subdivideCube(cube: Cube, generation: number = 0) {
         } else {
             if (!randomRemoveDecision(generation)) {
                 const insetCube = offset(cube, [-padding / 2.0, -padding / 2.0, -padding / 2.0]) as Cube
-                remote.add(material(addRandomModifier(insetCube), 'random'))
+                remote.add(addRandomModifier(insetCube))
                 outputCount++
             }
         }
