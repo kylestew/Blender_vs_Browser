@@ -3,7 +3,7 @@ import { toBlenderPython } from '../lib/toBlenderPython'
 export class BlenderRemote {
     queuedCode: string = ''
 
-    constructor(cleanOnStart = true) {
+    constructor(cleanOnStart = false) {
         if (cleanOnStart) {
             this.cleanScene()
         }
