@@ -1,4 +1,4 @@
-import { Attribs, Cube, Plane } from 'root/geo'
+import { Attribs, Cube, Sphere, Plane } from 'root/geo'
 
 export interface BlenderPythonDescribable {
     toBlenderPython(): string
@@ -16,6 +16,8 @@ export function toBlenderPython(obj: any): string | undefined {
 
     if (obj instanceof Cube) {
         return cubeToCode(obj as Cube)
+    } else if (obj instanceof Sphere) {
+        return sphereToCode(obj as Sphere)
     } else if (obj instanceof Plane) {
         return planeToCode(obj as Plane)
     }
@@ -65,6 +67,16 @@ bpy.context.collection.objects.link(mesh_obj)
 mesh_obj.scale = (${size[0]}, ${size[1]}, ${size[2]})
 bpy.context.view_layer.objects.active = mesh_obj
 `
+    return applyAttribs(attribs, code)
+}
+
+function sphereToCode(sphere: Sphere): string {
+    // https://docs.blender.org/api/current/bpy.ops.mesh.html#bpy.ops.mesh.primitive_ico_sphere_add
+    const { pos, r, subdivisions, attribs } = sphere
+
+    const code = `
+bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=${subdivisions}, radius=${r}, location=(${pos[0]}, ${pos[1]}, ${pos[2]}))
+    `
     return applyAttribs(attribs, code)
 }
 
