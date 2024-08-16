@@ -1,9 +1,4 @@
 import { Attribs, Cube, Plane } from 'root/geo'
-import { Light } from './Light'
-import { Camera } from './Camera'
-import { Material } from './Material'
-
-import { randomInt } from 'root/random'
 
 export interface BlenderPythonDescribable {
     toBlenderPython(): string
@@ -13,6 +8,9 @@ export function toBlenderPython(obj: any): string | undefined {
     if (typeof obj === 'string') return obj
 
     if ('toBlenderPython' in obj) {
+        if ('attribs' in obj) {
+            return applyAttribs(obj.attribs, obj.toBlenderPython())
+        }
         return obj.toBlenderPython()
     }
 
@@ -20,15 +18,6 @@ export function toBlenderPython(obj: any): string | undefined {
         return cubeToCode(obj as Cube)
     } else if (obj instanceof Plane) {
         return planeToCode(obj as Plane)
-    } else if (obj instanceof Light) {
-        const light = obj as Light
-        return applyAttribs(light.attribs, light.toBlenderPython())
-    } else if (obj instanceof Camera) {
-        const camera = obj as Camera
-        return applyAttribs(camera.attribs, camera.toBlenderPython())
-    } else if (obj instanceof Material) {
-        const mat = obj as Material
-        return mat.toBlenderPython()
     }
     return undefined
 }
@@ -36,14 +25,19 @@ export function toBlenderPython(obj: any): string | undefined {
 function applyAttribs(attribs: Attribs, code: string): string {
     if (Object.keys(attribs).length == 0) return code
 
+    // let attribsCode = 'obj = bpy.context.active_object\n'
     let attribsCode = 'obj = bpy.context.active_object\n'
 
-    if (attribs.name) {
-        attribsCode += `obj.name = "${attribs.name}"\n`
-    }
+    // if (attribs.name) {
+    //     attribsCode += `obj.name = "${attribs.name}"\n`
+    // }
     // if (attribs.translation) {
     //     attribsCode += `obj.translate = (${attribs.rotation[0]}, ${attribs.rotation[1]}, ${attribs.rotation[2]})\n`
     // }
+
+    if (attribs.position) {
+        attribsCode += `obj.location = (${attribs.position[0]}, ${attribs.position[1]}, ${attribs.position[2]})\n`
+    }
     if (attribs.rotation) {
         attribsCode += `obj.rotation_euler = (${attribs.rotation[0]}, ${attribs.rotation[1]}, ${attribs.rotation[2]})\n`
     }
