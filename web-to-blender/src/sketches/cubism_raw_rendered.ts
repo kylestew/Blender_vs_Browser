@@ -1,7 +1,7 @@
-import { CubeGrid, Cube } from 'root/geo'
+import { CubeGrid, Cube, Sphere } from 'root/geo'
 import { offset } from 'root/geo'
 import { random, pickRandom } from 'root/random'
-import { wireframe, material } from '../lib/modifiers'
+import { wireframe, material, shadeSmooth } from '../lib/modifiers'
 import { BlenderRemote } from '../blender_remote'
 import { Collection } from '../lib/Collection'
 
@@ -37,12 +37,8 @@ function randomRemoveDecision(generation: number): boolean {
     return random() < random(0.65, 0.8)
 }
 
-function addRandomModifier(cube: Cube): Cube | string {
-    if (Math.random() < 0.4) {
-        return material(wireframe(cube), 'metal')
-    } else {
-        return material(cube, 'random')
-    }
+function hollowOutDecision(generation: number): boolean {
+    return random() < 0.4
 }
 
 function subdivideCube(cube: Cube, generation: number = 0) {
@@ -55,8 +51,17 @@ function subdivideCube(cube: Cube, generation: number = 0) {
         } else {
             if (!randomRemoveDecision(generation)) {
                 const insetCube = offset(cube, [-padding / 2.0, -padding / 2.0, -padding / 2.0]) as Cube
-                remote.add(collection.link(addRandomModifier(insetCube)))
-                outputCount++
+                if (hollowOutDecision(generation)) {
+                    // hollow out the cube and also place a sphere inside it
+                    remote.add(material(wireframe(collection.link(cube)), 'metal'))
+
+                    const sphere = Sphere.insideCube(insetCube, 3)
+                    remote.add(shadeSmooth(material(collection.link(sphere), 'random')))
+                } else {
+                    // place a normal cube
+                    remote.add(material(collection.link(insetCube), 'random'))
+                    outputCount++
+                }
             }
         }
     })
