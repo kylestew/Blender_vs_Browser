@@ -1,4 +1,4 @@
-import { Attribs, Cube, Sphere, Plane } from 'root/geo'
+import { Attribs, Cube, Sphere, Plane, Polygon } from 'root/geo'
 
 export interface BlenderPythonDescribable {
     toBlenderPython(): string
@@ -20,6 +20,8 @@ export function toBlenderPython(obj: any): string | undefined {
         return sphereToCode(obj as Sphere)
     } else if (obj instanceof Plane) {
         return planeToCode(obj as Plane)
+    } else if (obj instanceof Polygon) {
+        return polygonToCode(obj as Polygon)
     }
     return undefined
 }
@@ -87,5 +89,38 @@ function planeToCode(plane: Plane): string {
     const code = `
 bpy.ops.mesh.primitive_plane_add(size=${size}, location=(${pos[0]}, ${pos[1]}, ${pos[2]}))
 `
+    return applyAttribs(attribs, code)
+}
+
+function polygonToCode(poly: Polygon) {
+    const { pts, attribs } = poly
+
+    // Convert the points to Blender's vertices format
+    const vertices = pts.map((pt) => `(${pt[0]}, ${pt[1]}, ${pt[2] || 0})`).join(',\n    ')
+
+    // Create the Python code string with the converted vertices
+    const code = `
+# Step 1: Define the points of the polygon
+vertices = [
+    ${vertices}
+]
+
+# Define the edges and faces for the polygon
+edges = []
+faces = [${pts.map((_, i) => i).join(', ')}]
+
+# Step 2: Create a new mesh and object
+mesh = bpy.data.meshes.new("Polygon")
+mesh.from_pydata(vertices, edges, [faces])
+mesh.update()
+
+obj = bpy.data.objects.new("Polygon", mesh)
+
+# Link the object to the scene collection
+bpy.context.collection.objects.link(obj)
+
+bpy.context.view_layer.objects.active = obj
+`
+
     return applyAttribs(attribs, code)
 }

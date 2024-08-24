@@ -5,14 +5,47 @@
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite + TS</title>
+        <style>
+            :root {
+                font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+                line-height: 1.5;
+                font-weight: 400;
+                color-scheme: light dark;
+                color: rgba(255, 255, 255, 0.87);
+                background-color: #242424;
+                font-synthesis: none;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            canvas {
+                max-width: 94%;
+                max-height: 94%;
+
+                margin: auto;
+
+                overflow: auto;
+                object-fit: contain;
+
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+
+                filter: drop-shadow(0 0 0.5rem #25252599);
+            }
+        </style>
     </head>
     <body>
         <div id="app"></div>
 
         <!-- <script type="module" src="/src/main.ts"></script> -->
 
-        <script type="module" src="/src/sketches/cubism_raw_rendered.ts"></script>
-
+        <!-- <script type="module" src="/src/sketches/cubism_raw_rendered.ts"></script> -->
         <!-- <script type="module" src="/src/sketches/crazy_grid_ducky.ts"></script> -->
+        <!-- <script type="module" src="/src/sketches/rect_subdiv_extruded.ts"></script> -->
+        <script type="module" src="/src/sketches/urban_density.ts"></script>
     </body>
 </html>
