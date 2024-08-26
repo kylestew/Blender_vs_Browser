@@ -38,12 +38,13 @@ let outputCount = 0
 const collection = new Collection('Urban')
 remote.add(collection)
 
-const mats = ['glass', 'plastic']
+const mats = ['glass', 'glass_cut']
 
 // spit out all tris to blender
 cubes.forEach((cube) => {
-    const mat = weightedRandom(mats, [1, 6])
+    const mat = weightedRandom(mats, [1, 8])
     remote.add(collection.link(material(bevel(cube, 0.01), mat)))
+    // remote.add(collection.link(cube))
     outputCount++
 })
 

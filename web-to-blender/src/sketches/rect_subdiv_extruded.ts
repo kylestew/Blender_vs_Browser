@@ -28,7 +28,8 @@ function splitBalancedTri(tri: Vec2[], splitPct: number): [Vec2[], Vec2[]] {
 //     returns: bunch o triangles (to be flattened)
 //     """
 function recurseSplit(tri: Vec2[], curDepth: number): Vec2[][] {
-    if (curDepth === 5) {
+    if (curDepth === 1) {
+        // TODO: mark its depth and area now
         return [tri]
     } else {
         const splitPct = random(0.2, 0.8)
@@ -54,32 +55,32 @@ tris.push(...recurseSplit(triB, 0).map((pts) => new Polygon(pts)))
 // console.log(tris)
 
 // scale all of them down
-tris = tris.map((tri) => scale(tri, 0.995))
+// tris = tris.map((tri) => scale(tri, 0.995))
 
-const cmd = createCanvas(1200, 1200, undefined, [-6.2, 6.2])
+const cmd = createCanvas(1200, 1200, undefined, [-8.5, 8.5])
 cmd.clear('white')
 cmd.draw(tris, { stroke: '#000', weight: 0.03, lineCap: 'round', lineJoin: 'round' })
 // ===============================================================================
 
 // === 3D Workflow ================================================================
-const remote = new BlenderRemote()
-let outputCount = 0
+// const remote = new BlenderRemote()
+// let outputCount = 0
 
-const collection = new Collection('Tris')
-remote.add(collection)
+// const collection = new Collection('Tris')
+// remote.add(collection)
 
-const mats = ['random', 'metal']
+// const mats = ['random', 'metal']
 
-// spit out all tris to blender
-tris.forEach((poly) => {
-    const extruded = extrude(poly, random(0.5, 1.5))
-    const final = material(extruded, 'random')
+// // spit out all tris to blender
+// tris.forEach((poly) => {
+//     const extruded = extrude(poly, random(0.5, 1.5))
+//     const final = material(extruded, 'random')
 
-    remote.add(collection.link(final))
-})
+//     remote.add(collection.link(final))
+// })
 
-remote.flush()
-console.log('Final count:', outputCount)
+// remote.flush()
+// console.log('Final count:', outputCount)
 // ===============================================================================
 
 /*

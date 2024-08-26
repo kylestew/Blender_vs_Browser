@@ -46,7 +46,7 @@ function applyAttribs(attribs: Attribs, code: string): string {
         attribsCode += `obj.rotation_euler = (${attribs.rotation[0]}, ${attribs.rotation[1]}, ${attribs.rotation[2]})\n`
     }
     if (attribs.scale) {
-        attribsCode += `obj.rotation_euler = (${attribs.scale[0]}, ${attribs.scale[1]}, ${attribs.scale[2]})\n`
+        attribsCode += `obj.scale = (${attribs.scale[0]}, ${attribs.scale[1]}, ${attribs.scale[2]})\n`
     }
 
     return code + '\n' + attribsCode
